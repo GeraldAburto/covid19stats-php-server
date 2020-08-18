@@ -8,6 +8,7 @@ class RapidAPIService
 {
     public function getStats()
     {
+        Request::verifyPeer(false);
         $response = Request::get(
             "https://covid-193.p.rapidapi.com/statistics",
             array(
