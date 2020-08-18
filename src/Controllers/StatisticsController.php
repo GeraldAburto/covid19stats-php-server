@@ -15,7 +15,7 @@ class StatisticsController
     {
         try {
             $rapidAPIService = new  \App\Services\RapidAPIService();
-            $statsResponse = $rapidAPIService->getstats();
+            $statsResponse = $rapidAPIService->getStats();
 
             if ($statsResponse->code != 200)
                 return $response->withStatus($statsResponse->code);
@@ -49,13 +49,63 @@ class StatisticsController
                 }
             }
 
-            if (sizeof($map) == 0){
+            if (sizeof($map) == 0) {
                 $response->getBody()->write("Not Found");
                 return $response->withStatus(404);
             }
 
             $payload = json_encode($map);
 
+            $response->getBody()->write($payload);
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(200);
+        } catch (Exception $e) {
+            $response->getBody()->write($e->getMessage());
+            return $response->withStatus(500);
+        }
+    }
+
+    public function getCountry(Request $request, Response $response, $args)
+    {
+        try {
+            $country = $args['country'];
+
+            if ($country == null || strlen($country) == 0) {
+                $response->getBody()->write("Country name is required");
+                return $response->withStatus(400);
+            }
+
+            $rapidAPIService = new  \App\Services\RapidAPIService();
+            $statsResponse = $rapidAPIService->getStats($country);
+
+            if ($statsResponse->code != 200)
+                return $response->withStatus($statsResponse->code);
+
+            $map = array();
+            $stats = $statsResponse->body;
+            $continents = $stats->response;
+
+            for ($i = 0; $i < sizeof($continents); $i++) {
+                $country = $continents[$i];
+                $continent = $country->continent;
+
+                if ($continent == null)
+                    $continent = 'Unknown';
+
+                if (array_key_exists($continent, $map)) {
+                    array_push($map[$continent], $country);
+                } else {
+                    $map[$continent] = array($country);
+                }
+            }
+
+            if (sizeof($map) == 0) {
+                $response->getBody()->write("Not Found");
+                return $response->withStatus(404);
+            }
+
+            $payload = json_encode($map);
 
             $response->getBody()->write($payload);
             return $response
