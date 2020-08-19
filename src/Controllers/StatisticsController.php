@@ -85,6 +85,11 @@ class StatisticsController
             $stats = $statsResponse->body;
             $countryStats = $stats->response;
 
+            if (sizeof($countryStats) == 0) {
+                $response->getBody()->write("Not Found");
+                return $response->withStatus(404);
+            }
+
             $payload = json_encode($countryStats);
 
             $response->getBody()->write($payload);
