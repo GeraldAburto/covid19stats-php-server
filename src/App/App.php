@@ -5,20 +5,12 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 $app = AppFactory::create();
 
-$app->add(function (Request $request, RequestHandlerInterface $handler): Response {
-    $routeContext = RouteContext::fromRequest($request);
-    $routingResults = $routeContext->getRoutingResults();
-    $methods = $routingResults->getAllowedMethods();
-    $requestHeaders = $request->getHeaderLine('Access-Control-Request-Headers');
-
+$app->add(function ($request, $handler) {
     $response = $handler->handle($request);
-
-    $response = $response->withHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    $response = $response->withHeader('Access-Control-Allow-Origin', 'https://geraldaburto.github.io');
-    $response = $response->withHeader('Access-Control-Allow-Methods', implode(',', $methods));
-    $response = $response->withHeader('Access-Control-Allow-Headers', $requestHeaders);
-
-    return $response;
+    return $response
+            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:3000, https://geraldaburto.github.io')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET');
 });
 
 /* Routes */
