@@ -82,30 +82,10 @@ class StatisticsController
             if ($statsResponse->code != 200)
                 return $response->withStatus($statsResponse->code);
 
-            $map = array();
             $stats = $statsResponse->body;
-            $continents = $stats->response;
+            $countryStats = $stats->response;
 
-            for ($i = 0; $i < sizeof($continents); $i++) {
-                $country = $continents[$i];
-                $continent = $country->continent;
-
-                if ($continent == null)
-                    $continent = 'Unknown';
-
-                if (array_key_exists($continent, $map)) {
-                    array_push($map[$continent], $country);
-                } else {
-                    $map[$continent] = array($country);
-                }
-            }
-
-            if (sizeof($map) == 0) {
-                $response->getBody()->write("Not Found");
-                return $response->withStatus(404);
-            }
-
-            $payload = json_encode($map);
+            $payload = json_encode($countryStats);
 
             $response->getBody()->write($payload);
             return $response
