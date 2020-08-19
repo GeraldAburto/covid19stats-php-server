@@ -40,7 +40,7 @@ class StatisticsController
                 $continent = $country->continent;
 
                 if ($continent == null)
-                    $continent = 'Unknown';
+                    $continent = 'Other';
 
                 if (array_key_exists($continent, $map)) {
                     array_push($map[$continent], $country);
