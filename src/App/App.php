@@ -12,7 +12,7 @@ $app->add(function ($request, $handler) {
         'http://localhost:3000'
     ];
 
-    $origin = $request->header('origin');
+    $origin = $request->getHeaderLine('origin');
 
     if (in_array($origin, $allowedOrigins) == false)
         $origin = 'https://geraldaburto.github.io';
